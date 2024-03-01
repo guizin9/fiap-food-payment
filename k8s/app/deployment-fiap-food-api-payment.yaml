@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiap-food-api-payment-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fiap-food-api-payment
+      name: fiap-food-api-payment
+    spec:
+      containers:
+        - name: fiap-food-api-payment-container
+          image: updateconsultoria/fiap-food-payment:v1.0
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /swagger-ui/index.html
+              port: 8081
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /swagger-ui/index.html
+              port: 8081
+            periodSeconds: 10
+            failureThreshold: 5
+            initialDelaySeconds: 3
+          resources:
+            requests:
+              cpu: 10m
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fiap-food-api-payment
